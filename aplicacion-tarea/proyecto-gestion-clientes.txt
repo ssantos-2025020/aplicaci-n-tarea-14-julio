@@ -1,0 +1,137 @@
+=====================================================================
+PROMPT PARA PEDIR EL PROYECTO
+=====================================================================
+
+Necesito que crees una aplicación full-stack en TypeScript moderno para
+gestionar clientes, con la siguiente estructura de carpetas obligatoria
+(no se puede cambiar, solo se pueden agregar archivos adicionales):
+
+aplicacion-tarea
+├── backend
+│   ├── src
+│   │   ├── controllers
+│   │   ├── models
+│   │   ├── persistence
+│   │   ├── routes
+│   │   └── app.ts
+│   ├── data
+│   │   └── clientes.json
+│   ├── package.json
+│   └── tsconfig.json
+└── frontend
+    ├── src
+    │   ├── components
+    │   │   ├── cliente-form   (para ingresar clientes)
+    │   │   └── cliente-list   (para mostrar clientes)
+    │   ├── models             (espejo del backend)
+    │   ├── services           (conexión por HttpClient)
+    │   ├── app.component.ts
+    │   └── main.ts
+    └── angular.json
+
+Requisitos:
+
+1. Entidad Cliente con exactamente estos 4 atributos obligatorios
+   (se pueden agregar más, pero no quitar ninguno):
+   - codigoCliente
+   - nombreCliente
+   - direccionCliente
+   - telefonoCliente
+   Modélala como si fuera una entidad de una base de datos PostgreSQL
+   (incluye el DDL de referencia), aunque la persistencia real debe
+   hacerse en un archivo JSON.
+
+2. Backend en Node.js + TypeScript + Express:
+   - Un módulo de persistencia (carpeta `persistence`) que sea el ÚNICO
+     responsable de leer y escribir backend/data/clientes.json usando
+     fs/promises de forma asíncrona.
+   - Separar controladores (validación + lógica HTTP) de rutas y de
+     la persistencia.
+   - Manejar con try/catch: archivo inexistente, archivo vacío, JSON
+     corrupto, errores de permisos/E-S, campos faltantes o inválidos,
+     código de cliente duplicado, y código de cliente inexistente al
+     actualizar/eliminar.
+   - Exponer endpoints REST: GET, POST, PUT, DELETE para /api/clientes.
+
+3. Frontend en Angular (standalone components, sin NgModules):
+   - Componente cliente-form: formulario reactivo para crear clientes.
+   - Componente cliente-list: tabla que lista y permite eliminar
+     clientes, consumiendo el backend vía HttpClient.
+   - Modelo Cliente idéntico al del backend.
+   - Servicio ClienteService encapsulando las llamadas HTTP.
+
+4. Gestor de paquetes: usar SOLAMENTE pnpm (no npm ni yarn) en ambos
+   proyectos.
+
+5. Entregar también una documentación (README.md) que explique cómo
+   funciona el módulo de persistencia, qué errores maneja, los
+   endpoints disponibles y escenarios de prueba sugeridos (escritura
+   válida, validación de campos, duplicados, archivo vacío, archivo
+   corrupto, registros inexistentes).
+
+Explícame el código a medida que lo generas y asegúrate de que compile
+sin errores con TypeScript en modo strict.
+
+
+=====================================================================
+EXPLICACIÓN DEL PROYECTO
+=====================================================================
+
+1. IDEA GENERAL
+---------------------------------------------------------------------
+Es una aplicación de gestión de clientes con dos partes: un backend en
+Node.js/TypeScript que guarda los datos en un archivo JSON usando
+fs/promises, y un frontend en Angular que consume esa información por
+HTTP.
+
+2. ESTRUCTURA DEL PROYECTO
+---------------------------------------------------------------------
+Se separó el proyecto en capas, como se haría en una aplicación real:
+
+- models: define cómo luce un Cliente (los 4 atributos).
+- persistence: es el único lugar que toca el archivo clientes.json.
+  Nadie más lee o escribe el archivo directamente.
+- controllers: reciben la petición HTTP, validan los datos, y le piden
+  a persistence que lea o escriba.
+- routes: conectan cada URL (/api/clientes) con su controlador.
+
+Idea clave: se separaron responsabilidades para que, si en el futuro
+se cambia de JSON a una base de datos real como PostgreSQL, solo
+habría que modificar el módulo de persistencia, sin tocar el resto.
+
+3. CÓMO FUNCIONA LA PERSISTENCIA (lo más importante de la rúbrica)
+---------------------------------------------------------------------
+1) Cuando se pide leer clientes, leerClientes() abre el archivo con
+   fs.readFile de forma asíncrona (con await).
+2) Si el archivo no existe, lo crea automáticamente vacío ([]) en
+   lugar de fallar.
+3) Si el archivo está vacío o el JSON está dañado, lo captura con
+   try/catch y devuelve una lista vacía, para que la aplicación nunca
+   se caiga.
+4) Cuando se pide guardar, se convierte el arreglo completo a texto
+   con JSON.stringify y se escribe con fs.writeFile.
+
+4. MANEJO DE ERRORES (casos que se pueden demostrar en vivo)
+---------------------------------------------------------------------
+- Enviar el formulario sin llenar un campo -> el backend responde
+  error 400 y no guarda nada.
+- Intentar crear un cliente con un código que ya existe -> responde
+  409.
+- Vaciar manualmente el archivo clientes.json y recargar la lista ->
+  no truena, muestra lista vacía.
+
+5. EL FRONTEND
+---------------------------------------------------------------------
+- El formulario (cliente-form) usa un FormGroup reactivo con
+  validaciones.
+- Al guardar, llama al ClienteService, que hace la petición HTTP al
+  backend.
+- La lista (cliente-list) se recarga automáticamente cada vez que se
+  crea un cliente nuevo, usando un @Input() que cambia de valor.
+
+6. CIERRE
+---------------------------------------------------------------------
+Con esto se cumplen los objetivos de la actividad: un módulo de
+persistencia separado, operaciones asíncronas con fs/promises, manejo
+de errores con try/catch, validaciones antes de guardar, y
+documentación de todo el comportamiento en el README.

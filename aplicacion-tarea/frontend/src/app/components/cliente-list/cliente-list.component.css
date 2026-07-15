@@ -1,0 +1,22 @@
+.cliente-list {
+  margin-top: 1.5rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.error {
+  color: #c0392b;
+}
+
+button {
+  cursor: pointer;
+}

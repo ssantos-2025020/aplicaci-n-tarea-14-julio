@@ -1,0 +1,27 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="cliente-form">
+  <h3>Nuevo Cliente</h3>
+
+  <div class="campo">
+    <label for="codigoCliente">Código de cliente</label>
+    <input id="codigoCliente" type="text" formControlName="codigoCliente" />
+  </div>
+
+  <div class="campo">
+    <label for="nombreCliente">Nombre</label>
+    <input id="nombreCliente" type="text" formControlName="nombreCliente" />
+  </div>
+
+  <div class="campo">
+    <label for="direccionCliente">Dirección</label>
+    <input id="direccionCliente" type="text" formControlName="direccionCliente" />
+  </div>
+
+  <div class="campo">
+    <label for="telefonoCliente">Teléfono</label>
+    <input id="telefonoCliente" type="text" formControlName="telefonoCliente" />
+  </div>
+
+  <p class="error" *ngIf="mensajeError">{{ mensajeError }}</p>
+
+  <button type="submit" [disabled]="enviando">Guardar</button>
+</form>

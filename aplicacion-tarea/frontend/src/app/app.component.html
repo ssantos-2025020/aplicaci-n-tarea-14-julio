@@ -1,0 +1,7 @@
+<main class="contenedor">
+  <h1>{{ title }}</h1>
+
+  <app-cliente-form (clienteCreado)="onClienteCreado($event)"></app-cliente-form>
+
+  <app-cliente-list [refrescar]="contadorRefresco"></app-cliente-list>
+</main>
