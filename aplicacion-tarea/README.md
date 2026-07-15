@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Aplicación Tarea — Gestión de Clientes
 
 Módulo de persistencia con JSON y `fs/promises` (backend) + interfaz Angular (frontend).
@@ -144,4 +143,3 @@ El frontend consume la API en `http://localhost:3000/api/clientes`
 (definido en `frontend/src/app/services/cliente.service.ts`).
 =======
 # aplicaci-n-tarea-14-julio
->>>>>>> c85e01442bfca59c112805b773dc29e537db8773
